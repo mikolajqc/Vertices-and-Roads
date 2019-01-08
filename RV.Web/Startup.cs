@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using RV.Web.Configuration;
 using RV.Web.Repository;
 
@@ -21,6 +22,14 @@ namespace RV.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "RV.API",
+                    Description = "API for RV - Roads and Views"
+                });
+            });
             services.Configure<PostgresConfiguration>(Configuration.GetSection("postgresConfiguration"));
             services.AddSingleton<IPointRepository, PointRepository>();
         }
@@ -37,8 +46,17 @@ namespace RV.Web
                 app.UseHsts();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "RV.API V1");
+            });
+            
+            AutoMapperConfiguration.Configure();
+            
             app.UseHttpsRedirection();
             app.UseMvc();
+
         }
     }
 }

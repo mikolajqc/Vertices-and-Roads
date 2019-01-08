@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using RV.Model;
 using RV.Web.Configuration;
 using Npgsql;
+using RV.Model.Entities;
 using RV.Web.Configuration.Extensions;
 
 namespace RV.Web.Repository

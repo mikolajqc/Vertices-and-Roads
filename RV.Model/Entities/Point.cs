@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RV.Model
+namespace RV.Model.Entities
 {
     public class Point : BaseEntity
     {

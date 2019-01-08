@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RV.Model
+namespace RV.Model.Entities
 {
     public abstract class BaseEntity
     {
