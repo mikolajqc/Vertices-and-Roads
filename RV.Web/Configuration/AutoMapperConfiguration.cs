@@ -4,7 +4,7 @@ using RV.Model.ViewModels;
 
 namespace RV.Web.Configuration
 {
-    public class AutoMapperConfiguration
+    public static class AutoMapperConfiguration
     {
         public static void Configure()
         {
@@ -14,6 +14,7 @@ namespace RV.Web.Configuration
         private static void AddRvAutoMapperConfiguration(IProfileExpression mapperConfigurationExpression)
         {
             mapperConfigurationExpression.CreateMap<PointViewModel, Point>();
+            mapperConfigurationExpression.CreateMap<Point, PointViewModel>();
         }
     }
 }

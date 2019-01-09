@@ -25,14 +25,13 @@ namespace RV.Web.Controllers
             return Mapper.Map<PointViewModel>(_pointRepository.FindById(id));
         }
 
-        [HttpPost, Route("shortest-path")]
-        public ActionResult<List<PointViewModel>> GetShortestPath(GetShortestPathRequest request)
+        [HttpPost, Route("shortest-path-dijkstra")]
+        public ActionResult<IEnumerable<PointViewModel>> GetShortestPathUsingDijkstra(GetShortestPathRequest request)
         {
-            return new ActionResult<List<PointViewModel>>(new List<PointViewModel>
-            {
-                new PointViewModel {Id = 1,Latitude = 10,Longitude = 10},
-                new PointViewModel {Id = 2,Latitude = 20,Longitude = 20}
-            });
+            return Ok(_pointRepository.GetPointsOnShortestPathUsingDijkstra(
+                Mapper.Map<Point>(request.SourcePoint),
+                Mapper.Map<Point>(request.TargetPoint)
+                ));
         }
     }
 }
