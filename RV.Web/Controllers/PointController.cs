@@ -29,9 +29,22 @@ namespace RV.Web.Controllers
         public ActionResult<IEnumerable<PointViewModel>> GetShortestPathUsingDijkstra(GetShortestPathRequest request)
         {
             return Ok(_pointRepository.GetPointsOnShortestPathUsingDijkstra(
-                Mapper.Map<Point>(request.SourcePoint),
-                Mapper.Map<Point>(request.TargetPoint)
+                Mapper.Map<Requests.Common.Point,Point>(request.SourcePoint, opt =>
+                opt.AfterMap((src, dest) => dest.Id = 0)),
+                Mapper.Map<Requests.Common.Point,Point>(request.TargetPoint, opt =>
+                    opt.AfterMap((src, dest) => dest.Id = 0))
                 ));
+        }
+        
+        [HttpPost, Route("shortest-path-astar")]
+        public ActionResult<IEnumerable<PointViewModel>> GetShortestPathUsingAStar(GetShortestPathRequest request)
+        {
+            return Ok(_pointRepository.GetPointsOnShortestPathUsingAStar(
+                Mapper.Map<Requests.Common.Point,Point>(request.SourcePoint, opt =>
+                    opt.AfterMap((src, dest) => dest.Id = 0)),
+                Mapper.Map<Requests.Common.Point,Point>(request.TargetPoint, opt =>
+                    opt.AfterMap((src, dest) => dest.Id = 0))
+            ));
         }
     }
 }

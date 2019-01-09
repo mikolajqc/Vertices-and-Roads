@@ -1,10 +1,10 @@
-using RV.Model.ViewModels;
+using RV.Web.Requests.Common;
 
 namespace RV.Web.Requests
 {
     public class GetShortestPathRequest
     {
-        public PointViewModel SourcePoint { get; set; }
-        public PointViewModel TargetPoint { get; set; }
+        public Point SourcePoint { get; set; }
+        public Point TargetPoint { get; set; }
     }
 }

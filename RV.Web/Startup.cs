@@ -47,16 +47,12 @@ namespace RV.Web
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "RV.API V1");
-            });
-            
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "RV.API V1"); });
+
             AutoMapperConfiguration.Configure();
-            
+
             app.UseHttpsRedirection();
             app.UseMvc();
-
         }
     }
 }
