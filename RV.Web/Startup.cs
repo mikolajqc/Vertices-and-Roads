@@ -21,6 +21,15 @@ namespace RV.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var cors = Configuration.GetSection("CorsConfigurationSection").Get<CorsConfigurationSection>();
+
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerGen(c =>
             {
@@ -53,6 +62,7 @@ namespace RV.Web
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseCors("MyPolicy");
         }
     }
 }
