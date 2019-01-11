@@ -1,2 +1,2 @@
 #!/bin/bash
-docker start RV_database
+docker start rv-database
