@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RV.Model.Entities;
 using RV.Model.ViewModels;
 using RV.Web.Repository;
+using RV.Web.Repository.Point;
 using RV.Web.Requests;
 
 namespace RV.Web.Controllers

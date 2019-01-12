@@ -3,12 +3,11 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Options;
-using RV.Web.Configuration;
 using Npgsql;
-using RV.Model.Entities;
+using RV.Web.Configuration;
 using RV.Web.Configuration.Extensions;
 
-namespace RV.Web.Repository
+namespace RV.Web.Repository.Point
 {
     public class PointRepository : IPointRepository
     {
@@ -21,17 +20,18 @@ namespace RV.Web.Repository
 
         internal IDbConnection Connection => new NpgsqlConnection();
 
-        public Point FindById(int id)
+        Model.Entities.Point IRepository<Model.Entities.Point>.FindById(int id)
         {
             using (IDbConnection dbConnection = new NpgsqlConnection(_postgresConfiguration.ToConnectionString()))
             {
                 dbConnection.Open();
-                return dbConnection.Query<Point>(@"SELECT * FROM Point WHERE id = @Id",
+                return dbConnection.Query<Model.Entities.Point>(@"SELECT * FROM Point WHERE id = @Id",
                     new {Id = id}).FirstOrDefault();
             }
         }
 
-        public IEnumerable<Point> GetPointsOnShortestPathUsingDijkstra(Point source, Point target)
+        public IEnumerable<Model.Entities.Point> GetPointsOnShortestPathUsingDijkstra(Model.Entities.Point source,
+            Model.Entities.Point target)
         {
             const string query = @"
 SELECT p.id, p.latitude, p.longitude
@@ -57,7 +57,7 @@ true
             using (IDbConnection dbConnection = new NpgsqlConnection(_postgresConfiguration.ToConnectionString()))
             {
                 dbConnection.Open();
-                return dbConnection.Query<Point>(
+                return dbConnection.Query<Model.Entities.Point>(
                     query,
                     new
                     {
@@ -69,7 +69,8 @@ true
             }
         }
 
-        public IEnumerable<Point> GetPointsOnShortestPathUsingAStar(Point source, Point target)
+        public IEnumerable<Model.Entities.Point> GetPointsOnShortestPathUsingAStar(Model.Entities.Point source,
+            Model.Entities.Point target)
         {
             const string query = @"
 SELECT p.id, p.longitude, p.latitude
@@ -107,7 +108,7 @@ JOIN point p ON p.id = pt.id1;";
             using (IDbConnection dbConnection = new NpgsqlConnection(_postgresConfiguration.ToConnectionString()))
             {
                 dbConnection.Open();
-                return dbConnection.Query<Point>(
+                return dbConnection.Query<Model.Entities.Point>(
                     query,
                     new
                     {
