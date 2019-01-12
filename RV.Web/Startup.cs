@@ -60,7 +60,7 @@ namespace RV.Web
 
             AutoMapperConfiguration.Configure();
 
-            app.UseHttpsRedirection();
+           // app.UseHttpsRedirection();
             app.UseMvc();
             app.UseCors("MyPolicy");
         }
