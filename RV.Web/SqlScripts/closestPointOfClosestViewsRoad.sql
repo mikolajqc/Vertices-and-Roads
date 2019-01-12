@@ -1,4 +1,3 @@
-
 CREATE TEMP TABLE temp_roads(road_id int, source_geom geometry, target_geom geometry, source int, target int, distance_to_road float, distance_to_source float, distance_to_target float);
 
 INSERT INTO temp_roads
@@ -33,7 +32,9 @@ order by distance_to_road limit 1);
 select *
 from temp_roads;
 
-WITH next_point as
+CREATE TEMP TABLE temp_points(id int PRIMARY KEY, longitude float, latitude float);
+
+CREATE TEMP TABLE next_point as
        (
   select
   CASE
@@ -45,11 +46,21 @@ WITH next_point as
     WHEN (distance_to_target > distance_to_source)
       THEN source_geom
     ELSE target_geom
-  END as point_geom
+  END as point_geom,
+  CASE
+    WHEN (distance_to_target > distance_to_source)
+      THEN target
+    ELSE source
+  END as point_next_id,
+  CASE
+    WHEN (distance_to_target > distance_to_source)
+      THEN source_geom
+    ELSE target_geom
+  END as point_next_geom
 from temp_roads
-         )
+         );
 
-SELECT p.id, p.longitude, p.latitude, pt.cost
+INSERT INTO temp_points ( select p.id, p.longitude, p.latitude
 FROM pgr_aStar(
 'SELECT
   r.id,
@@ -79,6 +90,18 @@ LIMIT 1),
   LIMIT 1),
   false,
   false) as pt
-JOIN point p ON p.id = pt.id1;
+JOIN point p ON p.id = pt.id1);
 
+
+INSERT INTO temp_points (
+  select p.id as id, longitude, latitude
+  from next_point np
+  JOIN Point p ON np.point_next_id = p.id)
+ON CONFLICT DO NOTHING;
+
+select *
+from temp_points;
+
+drop table next_point;
+drop table temp_points;
 drop table temp_roads;
