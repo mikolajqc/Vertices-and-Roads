@@ -1,3 +1,10 @@
+--=======================
+--=======================
+-- zrobic generowanie albo dodawanie jakies odcinkow widokowych
+-- zrobic dodatkowa temporalna tabelke ktora bedize sortowac widokowe odcinki po odleglosci od przekatnej miedzy source a target
+-- a nastepnie od najblizszych concatenowac wynik dzialania poniższej procedury gdzie warunkiem stopu jest uzyskanie sumy dlugosci wymaganej
+-- lub brak sciezki => wynik: failure
+
 CREATE TEMP TABLE temp_roads(road_id int, source_geom geometry, target_geom geometry, source int, target int, distance_to_road float, distance_to_source float, distance_to_target float);
 
 INSERT INTO temp_roads
