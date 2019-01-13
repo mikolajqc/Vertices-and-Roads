@@ -19,7 +19,7 @@ namespace RV.Web.Controllers
         {
             _pointRepository = pointRepository;
         }
-        
+
         [HttpGet("{id}")]
         public ActionResult<PointViewModel> Get(int id)
         {
@@ -27,24 +27,39 @@ namespace RV.Web.Controllers
         }
 
         [HttpPost, Route("shortest-path-dijkstra")]
-        public ActionResult<IEnumerable<PointViewModel>> GetShortestPathUsingDijkstra([FromBody]GetShortestPathRequest request)
+        public ActionResult<IEnumerable<PointViewModel>> GetShortestPathUsingDijkstra(
+            [FromBody] GetShortestPathRequest request)
         {
             return Ok(_pointRepository.GetPointsOnShortestPathUsingDijkstra(
-                Mapper.Map<Requests.Common.Point,Point>(request.SourcePoint, opt =>
-                opt.AfterMap((src, dest) => dest.Id = 0)),
-                Mapper.Map<Requests.Common.Point,Point>(request.TargetPoint, opt =>
+                Mapper.Map<Requests.Common.Point, Point>(request.SourcePoint, opt =>
+                    opt.AfterMap((src, dest) => dest.Id = 0)),
+                Mapper.Map<Requests.Common.Point, Point>(request.TargetPoint, opt =>
                     opt.AfterMap((src, dest) => dest.Id = 0))
-                ));
+            ));
         }
-        
+
         [HttpPost, Route("shortest-path-astar")]
-        public ActionResult<IEnumerable<PointViewModel>> GetShortestPathUsingAStar([FromBody]GetShortestPathRequest request)
+        public ActionResult<IEnumerable<PointViewModel>> GetShortestPathUsingAStar(
+            [FromBody] GetShortestPathRequest request)
         {
             return Ok(_pointRepository.GetPointsOnShortestPathUsingAStar(
-                Mapper.Map<Requests.Common.Point,Point>(request.SourcePoint, opt =>
+                Mapper.Map<Requests.Common.Point, Point>(request.SourcePoint, opt =>
                     opt.AfterMap((src, dest) => dest.Id = 0)),
-                Mapper.Map<Requests.Common.Point,Point>(request.TargetPoint, opt =>
+                Mapper.Map<Requests.Common.Point, Point>(request.TargetPoint, opt =>
                     opt.AfterMap((src, dest) => dest.Id = 0))
+            ));
+        }
+
+        [HttpPost, Route("shortest-path-with-view-roads")]
+        public ActionResult<IEnumerable<PointViewModel>> GetPathWithViewRoads(
+            [FromBody] GetPathWithRoadsWithViewRequest request)
+        {
+            return Ok(_pointRepository.GetPointsWithViewRoads(
+                Mapper.Map<Requests.Common.Point, Point>(request.SourcePoint, opt =>
+                    opt.AfterMap((src, dest) => dest.Id = 0)),
+                Mapper.Map<Requests.Common.Point, Point>(request.TargetPoint, opt =>
+                    opt.AfterMap((src, dest) => dest.Id = 0)),
+                request.MinimalLengthOfViewRoads
             ));
         }
     }
