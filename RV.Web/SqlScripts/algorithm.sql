@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS closest_roads_to_source_target_line;
 DROP TABLE IF EXISTS result_path_in_points;
 
 CREATE TEMP TABLE current_starting_point(longitude float, latitude float);
-INSERT INTO current_starting_point VALUES (20.983455, 52.231909); -- to jest punkt startowy, wrzucic tutaj zmienne source node'a
+INSERT INTO current_starting_point VALUES (20.983455, 52.231909);
 CREATE TEMP TABLE target_point(longitude float, latitude float);
 INSERT INTO target_point VALUES (20.973400, 52.169647);
 
@@ -39,39 +39,31 @@ INSERT INTO nearest_point_to_source_and_target_geom VALUES
   (SELECT the_geom as target_geom from roads_vertices_pgr rv JOIN nearest_point_to_source_and_target n ON rv.id = n.target_id)
 );
 
-
---select *
---from nearest_point_to_source_and_target_geom;
-
-
 CREATE TEMP TABLE closest_roads_to_source_target_line as
   (select t.*
 from (select t.*, st_length(geom, true), sum(st_length(geom, true)) over (order by st_distance
   (st_makeline(
       (select source_geom from nearest_point_to_source_and_target_geom),
       (select target_geom from nearest_point_to_source_and_target_geom)
-    ), -- source and target - przekatna
+    ),
    geom,
    true
   ), id) as running_amount
       from roads t
       where t.isView = true
      ) t
-where running_amount - st_length(geom, true) < 1000 -- R - REQUIREMENT
+where running_amount - st_length(geom, true) < 1000 -- REQUIREMENT
 order by st_distance
            (st_makeline(
                 (select source_geom from nearest_point_to_source_and_target_geom),
                 (select target_geom from nearest_point_to_source_and_target_geom)
-              ), -- source and target - przekatna
+              ),
              geom,
              true
            ));
 
 select *
 from closest_roads_to_source_target_line;
-
--- to musi byc w repeat
--- zwraca liste punktow od danego punktu do najblizszego punktu w najblizszej widokowej sciezce
 
 CREATE TEMP TABLE result_path_in_points(id int, longitude float, latitude float, ord SERIAL);
 
@@ -114,10 +106,6 @@ $do$
 
     delete from closest_roads_to_source_target_line
     where id = (select road_id from nearest_road_to_point);
-
-    --select *
-    --from nearest_road_to_point;
-
 
     drop table if exists next_point;
 
@@ -165,20 +153,8 @@ $do$
     FROM roads r
     JOIN point src ON src.id = source
     JOIN point trg ON trg.id = target',
-    (SELECT source FROM roads
-    ORDER BY ST_Distance(
-          ST_StartPoint(geom),
-      ST_SetSRID((select source_geom from nearest_point_to_source_and_target_geom), 4326),
-      true
-    ) ASC
-    LIMIT 1),
-    (SELECT source FROM roads
-          ORDER BY ST_Distance(
-          ST_StartPoint(geom),
-      ST_SetSRID((select point_geom from next_point), 4326),
-      true
-          ) ASC
-      LIMIT 1),
+    (select source_id from nearest_point_to_source_and_target),
+    (select point_id from next_point),
       false,
       false) as pt
     JOIN point p ON p.id = pt.id1);
@@ -195,28 +171,22 @@ $do$
     INSERT INTO result_path_in_points
     (select id, longitude, latitude, ord from current_result_path_in_points);
 
-    --DELETE FROM current_starting_point;
-
-   -- INSERT INTO current_starting_point
-   --   (
-   --     select longitude, latitude
-  --      from current_result_path_in_points
-  --      order by ord desc
-   --     limit 1
-  --    );
-
       UPDATE nearest_point_to_source_and_target_geom
       SET source_geom = (SELECT the_geom as source_geom from roads_vertices_pgr rv where id IN (select id
         from current_result_path_in_points
         order by ord desc
         limit 1));
 
+      UPDATE nearest_point_to_source_and_target
+      SET source_id = (select id
+        from current_result_path_in_points
+        order by ord desc
+        limit 1);
+
    END LOOP;
   END
 $do$;
 
---select * from test_point;
---drop table test_point;
 
 INSERT INTO result_path_in_points ( select p.id, p.longitude, p.latitude
     FROM pgr_aStar(
@@ -232,20 +202,8 @@ INSERT INTO result_path_in_points ( select p.id, p.longitude, p.latitude
     FROM roads r
     JOIN point src ON src.id = source
     JOIN point trg ON trg.id = target',
-    (SELECT source FROM roads
-    ORDER BY ST_Distance(
-          ST_StartPoint(geom),
-      ST_SetSRID((select source_geom from nearest_point_to_source_and_target_geom), 4326),
-      true
-    ) ASC
-    LIMIT 1),
-    (SELECT source FROM roads
-          ORDER BY ST_Distance(
-          ST_StartPoint(geom),
-      ST_SetSRID((select target_geom from nearest_point_to_source_and_target_geom), 4326),
-      true
-          ) ASC
-      LIMIT 1),
+    (select source_id as source from nearest_point_to_source_and_target),
+    (select target_id as source from nearest_point_to_source_and_target),
       false,
       false) as pt
     JOIN point p ON p.id = pt.id1);
