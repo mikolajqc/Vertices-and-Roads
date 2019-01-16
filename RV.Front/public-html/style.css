@@ -1,0 +1,38 @@
+#map {
+    height: 100%;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.addressForm {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.addressForm > form > input[type="text"],
+.addressForm > form > input[type="submit"],
+.addressForm > form > input[type="button"],
+.radios{
+    border: none;
+    box-shadow: 0 0 3px grey;
+    display: block;
+    margin: 20px;
+    padding: 20px;
+    width: 330px;
+}
+
+.radios {
+    background: rgba(255, 255, 255, .7);
+    font-family: 'Roboto';
+    font-size: 13px;
+    color: #333;
+}

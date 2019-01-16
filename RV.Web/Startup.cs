@@ -28,7 +28,8 @@ namespace RV.Web
             {
                 builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             }));
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -48,6 +49,9 @@ namespace RV.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCors("MyPolicy");
+            app.UseOptions();
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -62,9 +66,7 @@ namespace RV.Web
 
             AutoMapperConfiguration.Configure();
 
-           // app.UseHttpsRedirection();
             app.UseMvc();
-            app.UseCors("MyPolicy");
         }
     }
 }

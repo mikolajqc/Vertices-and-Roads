@@ -4,10 +4,9 @@ namespace RV.Model.Entities
 {
     public class Road : BaseEntity
     {
-        [Required] public int SourceId { get; set; }
-        
-        [Required] public int TargetId { get; set; }
-        
-        [Required] public bool IsView { get; set; }
+        [Required] public float SourceLatitude { get; set; }
+        [Required] public float SourceLongitude { get; set; }
+        [Required] public float TargetLatitude { get; set; }
+        [Required] public float TargetLongitude { get; set; }
     }
 }
