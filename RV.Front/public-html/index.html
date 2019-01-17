@@ -10,15 +10,15 @@
 <div id="map"></div>
 <div class="addressForm">
     <form onsubmit="submitForm();return false;">
-        <input id="startingPoint" type="text" placeholder="Punkt startowy" autocomplete="on" required/>
-        <input id="destinationPoint" type="text" placeholder="Punkt docelowy" autocomplete="on" required/>
+        <input id="startingPoint" type="text" placeholder="Punkt startowy" autocomplete="on" required>
+        <input id="destinationPoint" type="text" placeholder="Punkt docelowy" autocomplete="on" required>
         <div class="radios">
             <input id="modeShortest" name="mode" type="radio" value="shortestPath" onClick="disableMinPath();" required> Najkrótsza droga.<br>
-            <input id="modeShortestWithSceneries" name="mode" type="radio" value="shortestAndSceneries" onClick="enableMinPath();" required/> Minimalna długość odcinków widokowych:
+            <input id="modeShortestWithSceneries" name="mode" type="radio" value="shortestAndSceneries" onClick="enableMinPath();" required> Minimalna długość odcinków widokowych:
         </div>
-        <input type="text" id="minLength" pattern="[0-9]+" placeholder="Minimalna długość" disabled/>
-        <input type="submit" value="Oblicz ścieżkę."/>
-        <input type="button" id="showViews" value="Pokaż ścieżki widokowe." onclick="sendViewPaths()"/>
+        <input type="text" id="minLength" pattern="[0-9]+" placeholder="Minimalna długość" disabled>
+        <input type="submit" value="Oblicz ścieżkę.">
+        <input type="button" id="showViews" value="Pokaż ścieżki widokowe." onclick="sendViewPaths();">
     </form>
 </div>
 <script src="spdb.js"></script>

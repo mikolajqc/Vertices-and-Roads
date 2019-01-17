@@ -1,4 +1,4 @@
-var map, path;
+var map, path, viewPaths;
 var markers = [];
 
 // Inicjalizacja mapy.
@@ -93,6 +93,51 @@ function clearMap() {
     }
 }
 
+function sendViewPaths() {
+    if(viewPaths) viewPaths.setMap(null);
+    if(markers.length != 2) {
+        alert("Wybierz dwa miejsca!");
+        return;
+    }
+    var data = {};
+    var url = '/api/road/get-view-roads';
+    data.sourcePoint = {};
+    data.targetPoint = {};
+    data.sourcePoint.longitude = markers[0].position.lat();
+    data.sourcePoint.latitude = markers[0].position.lng();
+    data.targetPoint.longitude = markers[1].position.lat();
+    data.targetPoint.latitude = markers[1].position.lng();
+
+    var coordinates = [];
+    var request = new XMLHttpRequest();
+    request.responseType = 'json';
+
+    // Obsługa odpowiedzi na zapytanie.
+    request.onload = function() {
+        if (request.response.statusCode === 200) {
+            JSON.parse(request.response.data).forEach(function (element) {
+                coordinates.push({
+                    lat: element['latitude'],
+                    lng: element['longitude']
+                });
+            });
+        }
+
+        viewPaths = new google.maps.Polyline({
+            path: coordinates,
+            geodesic: true,
+            strokeColor: '#7a3c8b',
+            strokeOpacity: 0.5,
+            strokeWeight: 3
+        });
+        viewPaths.setMap(map);
+    };
+    request.open("POST", "http://localhost:5000" + url, true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.send(JSON.stringify(data));
+}
+
+
 // Zatwierdzanie formularza.
 function submitForm() {
     if(markers.length != 2) {
@@ -142,3 +187,4 @@ function submitForm() {
     request.setRequestHeader('Content-Type', 'application/json');
     request.send(JSON.stringify(data));
 }
+
