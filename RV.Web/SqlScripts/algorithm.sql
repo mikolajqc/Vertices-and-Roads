@@ -5,9 +5,9 @@ DROP TABLE IF EXISTS closest_roads_to_source_target_line;
 DROP TABLE IF EXISTS result_path_in_points;
 
 CREATE TEMP TABLE current_starting_point(longitude float, latitude float);
-INSERT INTO current_starting_point VALUES (20.983455, 52.231909);
+INSERT INTO current_starting_point VALUES (@sourceLongitude, @sourceLatitude);
 CREATE TEMP TABLE target_point(longitude float, latitude float);
-INSERT INTO target_point VALUES (20.973400, 52.169647);
+INSERT INTO target_point VALUES (@targetLongitude, @targetLatitude);
 
 DROP TABLE IF EXISTS nearest_point_to_source_and_target;
 CREATE TEMP Table nearest_point_to_source_and_target(source_id int, target_id int);
@@ -52,7 +52,7 @@ from (select t.*, st_length(geom, true), sum(st_length(geom, true)) over (order 
       from roads t
       where t.isView = true
      ) t
-where running_amount - st_length(geom, true) < 1000 -- REQUIREMENT
+where running_amount - st_length(geom, true) < @minimalLengthOfViewRoads
 order by st_distance
            (st_makeline(
                 (select source_geom from nearest_point_to_source_and_target_geom),
@@ -61,9 +61,6 @@ order by st_distance
              geom,
              true
            ));
-
-select *
-from closest_roads_to_source_target_line;
 
 CREATE TEMP TABLE result_path_in_points(id int, longitude float, latitude float, ord SERIAL);
 

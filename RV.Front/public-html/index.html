@@ -16,9 +16,8 @@
             <input id="modeShortest" name="mode" type="radio" value="shortestPath" onClick="disableMinPath();" required> Najkrótsza droga.<br>
             <input id="modeShortestWithSceneries" name="mode" type="radio" value="shortestAndSceneries" onClick="enableMinPath();" required> Minimalna długość odcinków widokowych:
         </div>
-        <input type="text" id="minLength" pattern="[0-9]+" placeholder="Minimalna długość" disabled>
+        <input type="text" id="minLength" pattern="[0-9]+" placeholder="Minimalna długość" onchange="path.setMap(null);" disabled>
         <input type="submit" value="Oblicz ścieżkę.">
-        <input type="button" id="showViews" value="Pokaż ścieżki widokowe." onclick="sendViewPaths();">
     </form>
 </div>
 <script src="spdb.js"></script>

@@ -71,12 +71,14 @@ function putMarkers(places) {
 
 // Funkcja odblokowująca pole z minimalną długością.
 function enableMinPath() {
+    if(path) path.setMap(null);
     document.getElementById('minLength').disabled = false;
     document.getElementById('minLength').required = true;
 }
 
 // Funkcja zablokowująca pole z minimalną długością.
 function disableMinPath() {
+    if(path) path.setMap(null);
     document.getElementById('minLength').disabled = true;
     document.getElementById('minLength').required = false;
 }
@@ -103,11 +105,14 @@ function sendViewPaths() {
     var url = '/api/road/get-view-roads';
     data.sourcePoint = {};
     data.targetPoint = {};
-    data.sourcePoint.longitude = markers[0].position.lat();
-    data.sourcePoint.latitude = markers[0].position.lng();
-    data.targetPoint.longitude = markers[1].position.lat();
-    data.targetPoint.latitude = markers[1].position.lng();
-
+    data.sourcePoint.longitude = markers[0].position.lng();
+    data.sourcePoint.latitude = markers[0].position.lat();
+    data.targetPoint.longitude = markers[1].position.lng();
+    data.targetPoint.latitude = markers[1].position.lat();
+    if(document.getElementById('modeShortest').checked) {}
+    else {
+        data.minimalLengthOfViewRoads = parseInt(document.getElementById('minLength').value);
+    }
     var coordinates = [];
     var request = new XMLHttpRequest();
     request.responseType = 'json';
