@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RV.Web.Configuration;
 using RV.Web.Repository.Point;
-using RV.Web.Repository.Road;
 
 namespace RV.Web
 {
@@ -43,7 +42,6 @@ namespace RV.Web
             });
             services.Configure<PostgresConfiguration>(Configuration.GetSection("postgresConfiguration"));
             services.AddSingleton<IPointRepository, PointRepository>();
-            services.AddSingleton<IRoadRepository, RoadRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
